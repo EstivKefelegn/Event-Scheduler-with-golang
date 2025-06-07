@@ -1,0 +1,11 @@
+POST http://localhost:8080/events
+Content-Type: application/json
+
+
+{
+    "name": "Hlina kefelegn",
+    "description": "Hlina Test description",
+    "location": "Addis Ababa",
+    "datetime": "2025-10-05T00:00:00Z"  
+}
+
