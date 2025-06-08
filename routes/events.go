@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -63,5 +64,48 @@ func updateEvent(context *gin.Context) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't fetch the values from the db, try agin later"})
 	}
+
+	var updateEvent models.Event
+	err = context.ShouldBindJSON(&updateEvent)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "coundn't parse request data", "error": err.Error()})
+		return
+	}
+
+	updateEvent.ID = eventId
+	err = updateEvent.UpdateEvent()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't update events"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Event updated successfully"})
+}
+
+func deleteEvent(context *gin.Context) {
+	eventID, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	fmt.Println("Received event id:", context.Param("id"))
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Couldn't pare the event id"})
+		return
+	}
+
+	event, err := models.GetEventById(eventID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldn't fetch the event"})
+		return
+	}
+
+	err = event.DeleteEvent()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Couldnt fetch the event"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
 
 }

@@ -4,16 +4,18 @@ import (
 	"time"
 
 	"Eventplanning.go/Api/db"
-	)
 
-type Event struct {
-	ID          int64
-	Name        string    `binding:"required"`
-	Description string    `binding:"required"`
-	Location    string    `binding:"required"`
-	Datetime    time.Time `binding:"required"`
-	UserID      int
-}
+)
+
+	type Event struct {
+		ID          int64     `json:"id"`
+		Name        string    `json:"Name" binding:"required"`
+		Description string    `json:"Description" binding:"required"`
+		Location    string    `json:"Location" binding:"required"`
+		Datetime    time.Time `json:"Datetime" binding:"required"`
+		UserID      int       `json:"UserID"`
+	}
+	
 
 var events = []Event{}
 
@@ -77,7 +79,36 @@ func GetEventById(id int64) (*Event, error) {
 	return &event, nil
 }
 
-func updateEvent(id int64) {
-	
+func (event Event) UpdateEvent() error {
+	query := `
+	UPDATE events
+	SET name = ?, description = ?, location = ?, datetime = ?
+	WHERE id = ? 
+	`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err	
+	}
+
+	defer stmt.Close()
+	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.Datetime, event.UserID)
+
+	return err
+}
+
+func (event Event) DeleteEvent() error {
+	query := "DELETE FROM events WHERE id = ?"
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	 _, err = stmt.Exec(event.ID)
+
+	 return err
 
 }
