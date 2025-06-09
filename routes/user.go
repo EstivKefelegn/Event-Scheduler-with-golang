@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"Eventplanning.go/Api/models"
+	"Eventplanning.go/Api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,5 +46,11 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "user logged in successfully"})
+	token, err := utils.GenrateToken(user.Email, user.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Can't authenticate the user"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "user logged in successfully", "token": token})
 }

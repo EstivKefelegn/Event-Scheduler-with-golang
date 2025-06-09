@@ -1,9 +1,9 @@
 POST http://localhost:8080/events
 Content-Type: application/json
-
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld191c2VyQGdtYWlsLmNvbSIsImV4cCI6MTc0OTQxNTgwNCwidXNlcklEIjoxfQ.TEgu6CJ-eaIF3yx9V_URiqKQOYYNHimrVib8Kj-irG4
 
 {
-    "name": "Hlina kefelegn",
+    "name": "Hlina kefelegn updated 8",
     "description": "Hlina Test description",
     "location": "Addis Ababa",
     "datetime": "2025-10-05T00:00:00Z"  

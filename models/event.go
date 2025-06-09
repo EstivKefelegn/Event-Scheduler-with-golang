@@ -4,22 +4,20 @@ import (
 	"time"
 
 	"Eventplanning.go/Api/db"
-
 )
 
-	type Event struct {
-		ID          int64     `json:"id"`
-		Name        string    `json:"Name" binding:"required"`
-		Description string    `json:"Description" binding:"required"`
-		Location    string    `json:"Location" binding:"required"`
-		Datetime    time.Time `json:"Datetime" binding:"required"`
-		UserID      int       `json:"UserID"`
-	}
-	
+type Event struct {
+	ID          int64     `json:"id"`
+	Name        string    `json:"Name" binding:"required"`
+	Description string    `json:"Description" binding:"required"`
+	Location    string    `json:"Location" binding:"required"`
+	Datetime    time.Time `json:"Datetime" binding:"required"`
+	UserID      int64       `json:"UserID"`
+}
 
 var events = []Event{}
 
-func (e Event) Save() error {
+func (e *Event) Save() error {
 	query := `
 		INSERT INTO events(name, description, location, datetime, user_id)
 		VALUES (?,?,?,?,?)
@@ -52,7 +50,7 @@ func GetAllEvents() ([]Event, error) {
 
 	var events []Event
 
-	for rows.Next(){
+	for rows.Next() {
 		var event Event
 		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Datetime, &event.UserID)
 
@@ -66,8 +64,8 @@ func GetAllEvents() ([]Event, error) {
 
 func GetEventById(id int64) (*Event, error) {
 	query := `SELECT * FROM events WHERE ID = ?`
-	row := db.DB.QueryRow(query, id)	
-	
+	row := db.DB.QueryRow(query, id)
+
 	var event Event
 
 	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Datetime, &event.UserID)
@@ -89,7 +87,7 @@ func (event Event) UpdateEvent() error {
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil {
-		return err	
+		return err
 	}
 
 	defer stmt.Close()
@@ -107,8 +105,8 @@ func (event Event) DeleteEvent() error {
 	}
 
 	defer stmt.Close()
-	 _, err = stmt.Exec(event.ID)
+	_, err = stmt.Exec(event.ID)
 
-	 return err
+	return err
 
 }
